@@ -22,6 +22,7 @@ module.exports = {
       host : '192.168.1.225',
       ref  : 'origin/master',
       path : '~/photo/',
+      repo : 'origin/master',
       'pre-deploy-local': '',
       'post-deploy' : 'cd photo_ui; npm install && pm2 reload ecosystem.config.js',
       'pre-setup': ''
