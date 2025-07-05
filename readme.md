@@ -21,4 +21,12 @@ npm run build
 -> out   https://nextjs.org/docs/app/guides/static-exports
 
 
-sudo npm install pm2 -g
+curl -fsSL https://raw.githubusercontent.com/tj/n/master/bin/n | sudo bash -s install lts
+sudo npm install pm2 n npm -g
+cd photo_ui
+npm install
+
+npm run build
+
+sudo apt-get install libgphoto2-dev python3-setuptools python3-pip
+pip3 install "fastapi[standard]" gphoto2 --user --only-binary :all: --break-system-packages

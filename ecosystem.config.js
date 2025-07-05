@@ -14,18 +14,5 @@ module.exports = {
     instances: '1', // Or a number of instances
     script: 'node_modules/next/dist/bin/next',
     args: 'dev'
-  }],
-
-  deploy : {
-    production : {
-      user : 'ice',
-      host : '192.168.1.225',
-      ref  : 'origin/master',
-      path : '~/photo/',
-      repo : 'origin/master',
-      'pre-deploy-local': '',
-      'post-deploy' : 'cd photo_ui; npm install && pm2 reload ecosystem.config.js',
-      'pre-setup': ''
-    }
-  }
+  }]
 };
