@@ -1,6 +1,5 @@
 'use client'
 
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import CameraIcon from '@mui/icons-material/Camera';
@@ -33,6 +32,7 @@ export default function Home() {
     };
 
     fetchData();
+    // here should be fixed and used properly to sync dependencies
   }, [])
 
   function handleCameraConnect() {
@@ -179,17 +179,17 @@ export default function Home() {
   };
 
   console.log(state)
-  const isoItems = state.params.iso.options.map((item: string) =>
-    <MenuItem value={item}>{item}</MenuItem>
+  const isoItems = state.params.iso.options.map((item: string, index: number) =>
+    <MenuItem key={index} value={item}>{item}</MenuItem>
   );
-  const shutterItems = state.params.shutterspeed.options.map((item: string) =>
-    <MenuItem value={item}>{item}</MenuItem>
+  const shutterItems = state.params.shutterspeed.options.map((item: string, index: number) =>
+    <MenuItem key={index} value={item}>{item}</MenuItem>
   );
-  const apertureItems = state.params.aperture.options.map((item: string) =>
-    <MenuItem value={item}>{item}</MenuItem>
+  const apertureItems = state.params.aperture.options.map((item: string, index: number) =>
+    <MenuItem key={index} value={item}>{item}</MenuItem>
   );
-  const whiteBalanceItems = state.params.whitebalance.options.map((item: string) =>
-    <MenuItem value={item}>{item}</MenuItem>
+  const whiteBalanceItems = state.params.whitebalance.options.map((item: string, index: number) =>
+    <MenuItem key={index} value={item}>{item}</MenuItem>
   );
 
 
