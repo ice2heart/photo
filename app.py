@@ -3,8 +3,9 @@ import gphoto2 as gp
 
 import enum
 from dataclasses import dataclass
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+
 camera = None
 camera_config = None
 
@@ -66,6 +67,15 @@ def update_params():
             options=list(white_balance.get_choices()),
             address=white_balance
         )
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global camera
+    yield
+    if camera is not None:
+        camera.exit()
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
