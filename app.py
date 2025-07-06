@@ -68,6 +68,7 @@ def update_params():
             address=white_balance
         )
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global camera
@@ -169,6 +170,6 @@ async def set_param(param_name: str, value: str):
         param.address.set_value(value)
         camera.set_config(camera_config)
         param.value = value
-        return {"status": "success", "param": {param.name: {'value': param.value, 'options': param.options}}}
+        return {"status": "success", "param": { param.name: param.value}}
     except Exception as e:
         return {"status": "error", "message": str(e)}

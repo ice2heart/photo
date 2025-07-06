@@ -18,7 +18,20 @@ export default function Home() {
   const [state, setState] = useState({
     camera: false,
     pictureProcess: false,
-    params: { "aperture": { "options": [], "value": "" }, "iso": { "options": [], "value": "" }, "shutterspeed": { "options": [], "value": "" }, "whitebalance": { "options": [], "value": "" } }
+  });
+
+  const [cameraOptions, setCameraOptions] = useState({
+    apertureItems: [],
+    isoItems: [],
+    shutterItems: [],
+    whiteBalanceItems: []
+  });
+
+  const [cameraSettings, setCameraSettings] = useState({
+    iso: "",
+    shutterspeed: "",
+    aperture: "",
+    whitebalance: ""
   });
 
   useEffect(() => {
@@ -28,7 +41,25 @@ export default function Home() {
       })
 
       const newData = await response.json()
-      setState({ ...state, ...newData })
+      if (newData.status === 'error') {
+        return;
+      }
+      setState({ ...state, camera: newData.camera, pictureProcess: false });
+      if (newData.params === undefined) {
+        return;
+      }
+      setCameraSettings({
+        iso: newData.params.iso.value,
+        shutterspeed: newData.params.shutterspeed.value,
+        aperture: newData.params.aperture.value,
+        whitebalance: newData.params.whitebalance.value
+      });
+      setCameraOptions({
+        apertureItems: newData.params.aperture.options,
+        isoItems: newData.params.iso.options,
+        shutterItems: newData.params.shutterspeed.options,
+        whiteBalanceItems: newData.params.whitebalance.options
+      });
     };
 
     fetchData();
@@ -43,13 +74,27 @@ export default function Home() {
 
       const newData = await response.json()
       console.log(newData)
-      if (newData.status !== 'error') {
-        setState({
-          ...state,
-          ...newData,
-          camera: true
-        });
+      if (newData.status === 'error') {
+        return;
       }
+      setState({
+        ...state,
+        camera: true,
+        pictureProcess: false,
+      });
+      setCameraSettings({
+        iso: newData.params.iso.value,
+        shutterspeed: newData.params.shutterspeed.value,
+        aperture: newData.params.aperture.value,
+        whitebalance: newData.params.whitebalance.value
+      });
+      setCameraOptions({
+        apertureItems: newData.params.aperture.options,
+        isoItems: newData.params.iso.options,
+        shutterItems: newData.params.shutterspeed.options,
+        whiteBalanceItems: newData.params.whitebalance.options
+      });
+
     };
     fetchData();
   }
@@ -89,11 +134,12 @@ export default function Home() {
     fetchData();
   }
 
-  const handleChangeISO = (event: SelectChangeEvent) => {
+
+  const handleChangeParam = (event: SelectChangeEvent) => {
     // setAge(event.target.value as string);
-    console.log(event.target.value);
+    console.log(event);
     const fetchData = async () => {
-      const response = await fetch(`/api/set_param?param_name=iso&value=${event.target.value}`, {
+      const response = await fetch(`/api/set_param?param_name=${event.target.name}&value=${event.target.value}`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -105,90 +151,26 @@ export default function Home() {
       if (newData.status === 'error') {
         return;
       }
-      setState({
-        ...state,
-        params: { ...state.params, "iso": newData.param.iso} 
-      });
+      setCameraSettings({
+        ...cameraSettings,
+        ...newData.param
+      })
     }
     fetchData();
   };
 
-  const handleChangeShutter = (event: SelectChangeEvent) => {
-    const fetchData = async () => {
-      const response = await fetch(`/api/set_param?param_name=shutterspeed&value=${event.target.value}`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: ""
-      });
-      const newData = await response.json();
-      if (newData.status === 'error') {
-        return;
-      }
-      setState({
-        ...state,
-        params: { ...state.params, "shutterspeed": newData.param.shutterspeed }
-      });
-    }
-    fetchData();
-  };
-
-  const handleChangeAperture = (event: SelectChangeEvent) => {
-    const fetchData = async () => {
-      const response = await fetch(`/api/set_param?param_name=aperture&value=${event.target.value}`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: ""
-      });
-      const newData = await response.json();
-      if (newData.status === 'error') {
-        return;
-      }
-      setState({
-        ...state,
-        params: { ...state.params, "aperture": newData.param.aperture }
-      });
-    }
-    fetchData();
-  };
-
-  const handleChangeWhiteBalance = (event: SelectChangeEvent) => {
-    const fetchData = async () => {
-      const response = await fetch(`/api/set_param?param_name=whitebalance&value=${
-        event.target.value
-      }`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: ""
-      });
-      const newData = await response.json();
-      if (newData.status === 'error') {
-        return;
-      }
-      setState({
-        ...state,
-        params: { ...state.params, "whitebalance": newData.param.whitebalance }
-      });
-    }
-    fetchData();
-  };
 
   console.log(state)
-  const isoItems = state.params.iso.options.map((item: string, index: number) =>
+  const isoItems = cameraOptions.isoItems.map((item: string, index: number) =>
+    <MenuItem key={index} value={item} id='iso' itemID='iso2' >{item}</MenuItem>
+  );
+  const shutterItems = cameraOptions.shutterItems.map((item: string, index: number) =>
     <MenuItem key={index} value={item}>{item}</MenuItem>
   );
-  const shutterItems = state.params.shutterspeed.options.map((item: string, index: number) =>
+  const apertureItems = cameraOptions.apertureItems.map((item: string, index: number) =>
     <MenuItem key={index} value={item}>{item}</MenuItem>
   );
-  const apertureItems = state.params.aperture.options.map((item: string, index: number) =>
-    <MenuItem key={index} value={item}>{item}</MenuItem>
-  );
-  const whiteBalanceItems = state.params.whitebalance.options.map((item: string, index: number) =>
+  const whiteBalanceItems = cameraOptions.whiteBalanceItems.map((item: string, index: number) =>
     <MenuItem key={index} value={item}>{item}</MenuItem>
   );
 
@@ -219,9 +201,12 @@ export default function Home() {
                   labelId="iso-select-label"
                   id="iso-select"
                   label="ISO"
-                  value={state.params.iso.value}
+                  inputProps={{
+                    name: 'iso',
+                  }}
+                  value={cameraSettings.iso}
                   sx={{ minWidth: 140 }}
-                  onChange={handleChangeISO}
+                  onChange={handleChangeParam}
                 >
                   {isoItems}
                 </Select>
@@ -233,9 +218,12 @@ export default function Home() {
                   labelId="shutter-select-label"
                   id="shutter-select"
                   label="Shutter Speed"
-                  value={state.params.shutterspeed.value}
+                  inputProps={{
+                    name: 'shutterspeed',
+                  }}
+                  value={cameraSettings.shutterspeed}
                   sx={{ minWidth: 140 }}
-                  onChange={handleChangeShutter}
+                  onChange={handleChangeParam}
                 >
                   {shutterItems}
                 </Select>
@@ -248,9 +236,12 @@ export default function Home() {
                   labelId="aperture-select-label"
                   id="aperture-select"
                   label="Aperture"
-                  value={state.params.aperture.value}
+                  inputProps={{
+                    name: 'aperture',
+                  }}
+                  value={cameraSettings.aperture}
                   sx={{ minWidth: 140 }}
-                  onChange={handleChangeAperture}
+                  onChange={handleChangeParam}
                 >
                   {apertureItems}
                 </Select>
@@ -261,9 +252,12 @@ export default function Home() {
                   labelId="white-balance-select-label"
                   id="white-balance-select"
                   label="White Balance"
-                  value={state.params.whitebalance.value}
+                  inputProps={{
+                    name: 'whitebalance',
+                  }}
+                  value={cameraSettings.whitebalance}
                   sx={{ minWidth: 140 }}
-                  onChange={handleChangeWhiteBalance}
+                  onChange={handleChangeParam}
                 >
                   {whiteBalanceItems}
                 </Select>
@@ -271,7 +265,7 @@ export default function Home() {
             </Stack>
             <Divider />
             <ButtonGroup variant="outlined" aria-label="outlined primary button group">
-              <Button disabled={!state.camera} loading={state.pictureProcess} onClick={handleCameraPicture} loadingPosition="start" startIcon={<CameraIcon />} size="large" sx={{fontSize: 24}}>Picture</Button>
+              <Button disabled={!state.camera} loading={state.pictureProcess} onClick={handleCameraPicture} loadingPosition="start" startIcon={<CameraIcon />} size="large" sx={{ fontSize: 24 }}>Picture</Button>
             </ButtonGroup>
             <Divider />
           </Stack>
