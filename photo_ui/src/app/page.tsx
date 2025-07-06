@@ -136,8 +136,6 @@ export default function Home() {
 
 
   const handleChangeParam = (event: SelectChangeEvent) => {
-    // setAge(event.target.value as string);
-    console.log(event);
     const fetchData = async () => {
       const response = await fetch(`/api/set_param?param_name=${event.target.name}&value=${event.target.value}`, {
         method: "POST",
@@ -162,7 +160,7 @@ export default function Home() {
 
   console.log(state)
   const isoItems = cameraOptions.isoItems.map((item: string, index: number) =>
-    <MenuItem key={index} value={item} id='iso' itemID='iso2' >{item}</MenuItem>
+    <MenuItem key={index} value={item}>{item}</MenuItem>
   );
   const shutterItems = cameraOptions.shutterItems.map((item: string, index: number) =>
     <MenuItem key={index} value={item}>{item}</MenuItem>

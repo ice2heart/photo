@@ -4,7 +4,7 @@ module.exports = {
     watch: false,
     script : "./app.py",
     interpreter : "python3",
-    interpreter_args : "-m fastapi dev"
+    interpreter_args : "-m fastapi run"
   },
   {
     name   : "frontend",
@@ -13,6 +13,6 @@ module.exports = {
     exec_mode: 'fork',
     instances: '1', // Or a number of instances
     script: 'node_modules/next/dist/bin/next',
-    args: 'dev'
+    args: 'start'
   }]
 };
