@@ -99,6 +99,6 @@ async def run_program():
     global program
     if program is None:
         return {"status": "error", "message": "Program not initialized"}
-    while (program.step() != -1):
+    while (await program.step() != -1):
         pass
     return {"status": "success"}
