@@ -1,72 +1,13 @@
 from fastapi import FastAPI
-import gphoto2 as gp
 
-import enum
-from dataclasses import dataclass
+
 from contextlib import asynccontextmanager
 
+from camera import Camera, Params
+from lights import Lights, Program
 
-camera = None
-camera_config = None
-
-
-class Params(enum.Enum):
-    CAPTURE_TARGET = 'capturetarget'
-    CAPTURE_SETTINGS = 'capturesettings'
-    APERTURE = 'aperture'
-    SHUTTER_SPEED = 'shutterspeed'
-    ISO = 'iso'
-    WHITE_BALANCE = 'whitebalance'
-
-
-@dataclass
-class Param:
-    name: str
-    value: str
-    options: list[str]
-    address: gp.gphoto2.widget.CameraWidget
-
-
-params: dict[Param] = {}
-
-
-def update_params():
-    global camera
-    global params
-    global camera_config
-    camera_config = camera.get_config()
-    apperture = camera_config.get_child_by_name('aperture')
-    if apperture is not None:
-        params[Params.APERTURE] = Param(
-            name=Params.APERTURE.value,
-            value=apperture.get_value(),
-            options=list(apperture.get_choices()),
-            address=apperture
-        )
-    shutter_speed = camera_config.get_child_by_name('shutterspeed')
-    if shutter_speed is not None:
-        params[Params.SHUTTER_SPEED] = Param(
-            name=Params.SHUTTER_SPEED.value,
-            value=shutter_speed.get_value(),
-            options=list(shutter_speed.get_choices()),
-            address=shutter_speed
-        )
-    iso = camera_config.get_child_by_name('iso')
-    if iso is not None:
-        params[Params.ISO] = Param(
-            name=Params.ISO.value,
-            value=iso.get_value(),
-            options=list(iso.get_choices()),
-            address=iso
-        )
-    white_balance = camera_config.get_child_by_name('whitebalance')
-    if white_balance is not None:
-        params[Params.WHITE_BALANCE] = Param(
-            name=Params.WHITE_BALANCE.value,
-            value=white_balance.get_value(),
-            options=list(white_balance.get_choices()),
-            address=white_balance
-        )
+camera: Camera = None
+program: Program = None
 
 
 @asynccontextmanager
@@ -75,6 +16,7 @@ async def lifespan(app: FastAPI):
     yield
     if camera is not None:
         camera.exit()
+        camera = None
 
 app = FastAPI(lifespan=lifespan)
 
@@ -87,53 +29,37 @@ async def read_root():
 @app.post("/status")
 async def get_status():
     global camera
-    global params
-    global camera_config
     result = {}
     if camera is None:
         result['camera'] = False
     else:
         result['camera'] = True
-        update_params()
-        result['params'] = {param.name: {'value': param.value,
-                                         'options': param.options} for param in params.values()}
+        result['params'] = camera.read_params()
     return result
 
 
 @app.post("/connect")
 async def connect_camera():
     global camera
-    global params
-    global camera_config
+    global program
     if camera is None:
         try:
-            camera = gp.Camera()
-            camera.init()
-            camera_config = camera.get_config()
-            # Set the capture target to memory card
-            capture_target = camera_config.get_child_by_name('capturetarget')
-            if capture_target:
-                capture_target.set_value('Memory card')
-                camera.set_config(camera_config)
-
-            update_params()
-            return {"status": "connected", "params": {param.name: {'value': param.value, 'options': param.options} for param in params.values()}}
+            camera = Camera()
+            params = camera.read_params()
+            program = Program(Lights(), camera)
+            return {"status": "connected", "camera": True, "params": params}
         except Exception as e:
             camera = None
-            return {"status": "error", "message": str(e)}
-    else:
-        return {"status": "already connected"}
+            return {"status": "error", "camera": False, "message": str(e)}
 
 
 @app.post("/disconnect")
 async def disconnect_camera():
     global camera
-    global params
     if camera is not None:
         try:
             camera.exit()
             camera = None
-            params.clear()
             return {"status": "disconnected"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
@@ -147,7 +73,7 @@ async def capture_image():
     if camera is None:
         return {"status": "error", "message": "Camera not connected"}
     try:
-        file_path = camera.capture(gp.GP_CAPTURE_IMAGE)
+        file_path = camera.capture()
         return {"status": "success", "file_path": f"{file_path.folder}/{file_path.name}"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
@@ -156,20 +82,26 @@ async def capture_image():
 @app.post("/set_param")
 async def set_param(param_name: str, value: str):
     global camera
-    global params
-    global camera_config
-    param_name = Params(param_name)
     if camera is None:
         return {"status": "error", "message": "Camera not connected"}
 
-    if param_name not in params:
+    if param_name not in Params:
         return {"status": "error", "message": f"Parameter {param_name} not found"}
 
     try:
-        param = params[param_name]
-        param.address.set_value(value)
-        camera.set_config(camera_config)
-        param.value = value
-        return {"status": "success", "param": { param.name: param.value}}
+        param = camera.set_param(param_name, value)
+        return {"status": "success", "param": param}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/run")
+async def run_program():
+    global program
+    if program is None:
+        return {"status": "error", "message": "Program not initialized"}
+    try:
+        async for stage in program.run():
+            pass  # Handle user input or other actions as needed
+        return {"status": "success", "message": "Program completed"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
