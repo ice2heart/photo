@@ -85,7 +85,8 @@ async def set_param(param_name: str, value: str):
     if camera is None:
         return {"status": "error", "message": "Camera not connected"}
 
-    if param_name not in Params:
+    # ._value2member_map_  required for older python then 3.12
+    if param_name not in Params._value2member_map_ :
         return {"status": "error", "message": f"Parameter {param_name} not found"}
 
     try:

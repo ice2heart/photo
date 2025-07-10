@@ -47,8 +47,8 @@ class Program:
         self.program = [
             {'name': 'Focus', 'type': TYPE.TOP, 'color': (250, 250, 250), 'action': ACTIONS.USER_INPUT},
             {'name': 'Side', 'type': TYPE.SIDES, 'color': (0, 0, 0, 250), 'ids': [20, 21, 22, 23], 'action': ACTIONS.USER_INPUT},
-            {'name': 'Stage 0', 'type': TYPE.TOP, 'color': (250, 250, 250), 'action': ACTIONS.CAPTURE, 'camera': {'shutterspeed': '4', 'iso': '400', 'aperture': '7.1', 'whitebalance':'Flash'}},
-            {'name': 'Stage 1', 'type': TYPE.SIDES, 'color': (0, 0, 0, 250), 'ids': [4, 5, 6, 7], 'action': ACTIONS.CAPTURE,'camera': {'shutterspeed': '0.5"', 'iso': '400', 'aperture': '7.1', 'whitebalance':'Tungsten'}},
+            {'name': 'Stage 0', 'type': TYPE.TOP, 'color': (250, 250, 250), 'action': ACTIONS.CAPTURE, 'camera': {'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance':'Flash'}},
+            {'name': 'Stage 1', 'type': TYPE.SIDES, 'color': (0, 0, 0, 250), 'ids': [4, 5, 6, 7], 'action': ACTIONS.CAPTURE,'camera': {'shutterspeed': '0.5', 'iso': '400', 'aperture': '7.1', 'whitebalance':'Tungsten'}},
             {'name': 'Stage 2', 'type': TYPE.SIDES, 'color': (0, 0, 0, 250), 'ids': [8, 9, 10, 11], 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 3', 'type': TYPE.SIDES, 'color': (0, 0, 0, 250), 'ids': [20, 21, 22, 23], 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 4', 'type': TYPE.SIDES, 'color': (0, 0, 0, 250), 'ids': [24, 25, 26, 27], 'action': ACTIONS.CAPTURE},
@@ -78,8 +78,8 @@ class Program:
             self.lights.set_sides(stage['color'], stage.get('ids', []))
 
         if 'camera' in stage:
-            for k, v in stage['camera']:
-                self.camera.set_param(k, v)
+            for k in stage['camera']:
+                self.camera.set_param(k, stage['camera'][k])
 
         if stage['action'] == ACTIONS.USER_INPUT:
             return -1
