@@ -99,9 +99,6 @@ async def run_program():
     global program
     if program is None:
         return {"status": "error", "message": "Program not initialized"}
-    try:
-        async for stage in program.run():
-            pass  # Handle user input or other actions as needed
-        return {"status": "success", "message": "Program completed"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+    while (program.step() != -1):
+        pass
+    return {"status": "success"}

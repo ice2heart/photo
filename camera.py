@@ -63,6 +63,9 @@ class Camera:
         for param_name in Params:
             param = self.camera_config.get_child_by_name(param_name.value)
             if param:
-                params[param_name.value] = {'value': param.get_value(), 'options': list(param.get_choices())}
+                try:
+                    params[param_name.value] = {'value': param.get_value(), 'options': list(param.get_choices())}
+                except gp.GPhoto2Error:
+                    pass
         self.params = params
         return params
