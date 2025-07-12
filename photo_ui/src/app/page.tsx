@@ -14,6 +14,15 @@ import FormControl from '@mui/material/FormControl';
 import { useState, useEffect } from 'react';
 
 
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
+import AutomationPage from './automation';
+
+
 export default function Home() {
   const [state, setState] = useState({
     camera: false,
@@ -33,6 +42,13 @@ export default function Home() {
     aperture: "",
     whitebalance: ""
   });
+
+  const [tabPage, setTabPage] = useState('0')
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setTabPage(newValue);
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -177,97 +193,112 @@ export default function Home() {
   return (
     <div >
       <main >
-        <Card variant="outlined" sx={{ maxWidth: 600 }} >
-          <Stack
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-          >
-            <h1>Welcome to Camera UI</h1>
-            <ButtonGroup variant="outlined" aria-label="outlined primary button group">
-              <Button onClick={handleCameraConnect}>Connect</Button>
-              <Button disabled={!state.camera} onClick={handleCameraDisconnect}>Disconnect</Button>
-              <Button disabled={!state.camera} href="/settings">Settings</Button>
-            </ButtonGroup>
-            <Divider />
+        <TabContext value={tabPage}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList onChange={handleTabChange} aria-label="tabs">
+              <Tab label="Camera control" value="0" />
+              <Tab label="Automation" value="1" />
+            </TabList>
+          </Box>
+          <TabPanel value="0">
+            <Card variant="outlined" sx={{ maxWidth: 600 }} >
+              <Stack
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+              >
+                <h1>Welcome to Camera UI</h1>
+                <ButtonGroup variant="outlined" aria-label="outlined primary button group">
+                  <Button onClick={handleCameraConnect}>Connect</Button>
+                  <Button disabled={!state.camera} onClick={handleCameraDisconnect}>Disconnect</Button>
+                  <Button disabled={!state.camera} href="/settings">Settings</Button>
+                </ButtonGroup>
+                <Divider />
 
-            <Stack direction="row" spacing={1}>
-              <FormControl fullWidth>
-                <InputLabel id="iso-select-label">ISO</InputLabel>
-                <Select
-                  labelId="iso-select-label"
-                  id="iso-select"
-                  label="ISO"
-                  inputProps={{
-                    name: 'iso',
-                  }}
-                  value={cameraSettings.iso}
-                  sx={{ minWidth: 140 }}
-                  onChange={handleChangeParam}
-                >
-                  {isoItems}
-                </Select>
+                <Stack direction="row" spacing={1}>
+                  <FormControl fullWidth>
+                    <InputLabel id="iso-select-label">ISO</InputLabel>
+                    <Select
+                      labelId="iso-select-label"
+                      id="iso-select"
+                      label="ISO"
+                      inputProps={{
+                        name: 'iso',
+                      }}
+                      value={cameraSettings.iso}
+                      sx={{ minWidth: 140 }}
+                      onChange={handleChangeParam}
+                    >
+                      {isoItems}
+                    </Select>
 
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel id="shutter-select-label">Shutter Speed</InputLabel>
-                <Select
-                  labelId="shutter-select-label"
-                  id="shutter-select"
-                  label="Shutter Speed"
-                  inputProps={{
-                    name: 'shutterspeed',
-                  }}
-                  value={cameraSettings.shutterspeed}
-                  sx={{ minWidth: 140 }}
-                  onChange={handleChangeParam}
-                >
-                  {shutterItems}
-                </Select>
-              </FormControl>
-            </Stack>
-            <Stack direction="row" spacing={1}>
-              <FormControl fullWidth>
-                <InputLabel id="aperture-select-label">Aperture</InputLabel>
-                <Select
-                  labelId="aperture-select-label"
-                  id="aperture-select"
-                  label="Aperture"
-                  inputProps={{
-                    name: 'aperture',
-                  }}
-                  value={cameraSettings.aperture}
-                  sx={{ minWidth: 140 }}
-                  onChange={handleChangeParam}
-                >
-                  {apertureItems}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel id="white-balance-select-label">White Balance</InputLabel>
-                <Select
-                  labelId="white-balance-select-label"
-                  id="white-balance-select"
-                  label="White Balance"
-                  inputProps={{
-                    name: 'whitebalance',
-                  }}
-                  value={cameraSettings.whitebalance}
-                  sx={{ minWidth: 140 }}
-                  onChange={handleChangeParam}
-                >
-                  {whiteBalanceItems}
-                </Select>
-              </FormControl>
-            </Stack>
-            <Divider />
-            <ButtonGroup variant="outlined" aria-label="outlined primary button group">
-              <Button disabled={!state.camera} loading={state.pictureProcess} onClick={handleCameraPicture} loadingPosition="start" startIcon={<CameraIcon />} size="large" sx={{ fontSize: 24 }}>Picture</Button>
-            </ButtonGroup>
-            <Divider />
-          </Stack>
-        </Card>
+                  </FormControl>
+                  <FormControl fullWidth>
+                    <InputLabel id="shutter-select-label">Shutter Speed</InputLabel>
+                    <Select
+                      labelId="shutter-select-label"
+                      id="shutter-select"
+                      label="Shutter Speed"
+                      inputProps={{
+                        name: 'shutterspeed',
+                      }}
+                      value={cameraSettings.shutterspeed}
+                      sx={{ minWidth: 140 }}
+                      onChange={handleChangeParam}
+                    >
+                      {shutterItems}
+                    </Select>
+                  </FormControl>
+                </Stack>
+                <Stack direction="row" spacing={1}>
+                  <FormControl fullWidth>
+                    <InputLabel id="aperture-select-label">Aperture</InputLabel>
+                    <Select
+                      labelId="aperture-select-label"
+                      id="aperture-select"
+                      label="Aperture"
+                      inputProps={{
+                        name: 'aperture',
+                      }}
+                      value={cameraSettings.aperture}
+                      sx={{ minWidth: 140 }}
+                      onChange={handleChangeParam}
+                    >
+                      {apertureItems}
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth>
+                    <InputLabel id="white-balance-select-label">White Balance</InputLabel>
+                    <Select
+                      labelId="white-balance-select-label"
+                      id="white-balance-select"
+                      label="White Balance"
+                      inputProps={{
+                        name: 'whitebalance',
+                      }}
+                      value={cameraSettings.whitebalance}
+                      sx={{ minWidth: 140 }}
+                      onChange={handleChangeParam}
+                    >
+                      {whiteBalanceItems}
+                    </Select>
+                  </FormControl>
+                </Stack>
+                <Divider />
+                <ButtonGroup variant="outlined" aria-label="outlined primary button group">
+                  <Button disabled={!state.camera} loading={state.pictureProcess} onClick={handleCameraPicture} loadingPosition="start" startIcon={<CameraIcon />} size="large" sx={{ fontSize: 24 }}>Picture</Button>
+                </ButtonGroup>
+                <Divider />
+              </Stack>
+            </Card>
+          </TabPanel>
+          <TabPanel value="1">
+            <AutomationPage/>
+          </TabPanel>
+
+        </TabContext>
+
 
 
       </main>

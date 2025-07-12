@@ -73,7 +73,7 @@ async def capture_image():
     if camera is None:
         return {"status": "error", "message": "Camera not connected"}
     try:
-        file_path = camera.capture()
+        file_path = camera.capture_image()
         return {"status": "success", "file_path": f"{file_path.folder}/{file_path.name}"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
