@@ -6,17 +6,17 @@ from contextlib import asynccontextmanager
 from camera import Camera, Params
 from lights import Lights, Program
 
-from . import config
-from . import ikea_control
+from config import Settings
+from ikea_control import Ikea
 
 camera: Camera = None
 program: Program = None
-ikea: ikea_control.Ikea = None
+ikea: Ikea = None
 
 
 @lru_cache
-def get_settings() -> config.Settings:
-    return config.Settings()
+def get_settings() -> Settings:
+    return Settings()
 
 
 @asynccontextmanager
@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
     global camera
     global ikea
     settings = get_settings()
-    ikea = ikea_control.Ikea(settings.host, settings.identity, settings.psk, 65565 )
+    ikea = Ikea(settings.host, settings.identity, settings.psk, 65565 )
     await ikea.get_devices()
     yield
     if camera is not None:

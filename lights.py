@@ -42,7 +42,7 @@ class Program:
             {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 250), 'ids': [0, 1, 2, 3, 4, 5, 6, 7],  'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
             {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': [8, 9, 10, 11], 'action': ACTIONS.CAPTURE, 'camera': {
-                'shutterspeed': '0.5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
+                'shutterspeed': '1/4', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': [20, 21, 22, 23], 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 3', 'color': (0, 0, 0, 250), 'ids': [24, 25, 26, 27], 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 4',  'color': (0, 0, 0, 250), 'ids': [36, 37, 38, 39], 'action': ACTIONS.CAPTURE},
