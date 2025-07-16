@@ -38,8 +38,9 @@ class Program:
         self.program = [
             {'name': 'Focus', 'color': (0, 0, 0, 250), 'ids': [0, 1, 2, 3, 4, 5, 6, 7], 'action': ACTIONS.USER_INPUT},
             {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': [8, 9, 10, 11], 'action': ACTIONS.USER_INPUT},
-            {'name': 'Side', 'light':True, 'action': ACTIONS.USER_INPUT},
-            {'name': 'Stage 0', 'light':False, 'color': (0, 0, 0, 250), 'action': ACTIONS.CAPTURE, 'camera': {'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
+            {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
+            {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 250), 'ids': [0, 1, 2, 3, 4, 5, 6, 7],  'action': ACTIONS.CAPTURE, 'camera': {
+                'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
             {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': [8, 9, 10, 11], 'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '0.5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': [20, 21, 22, 23], 'action': ACTIONS.CAPTURE},
@@ -70,9 +71,9 @@ class Program:
             return -1
         if 'color' in stage:
             self.lights.set_sides(stage['color'], stage.get('ids', []))
-        
+
         if 'light' in stage:
-            await self.ikea.change_light_state(stage['light']);
+            await self.ikea.change_light_state(stage['light'])
 
         if 'camera' in stage:
             for k in stage['camera']:
