@@ -1,22 +1,36 @@
 from fastapi import FastAPI
 
-
+from functools import lru_cache
 from contextlib import asynccontextmanager
 
 from camera import Camera, Params
 from lights import Lights, Program
 
+from . import config
+from . import ikea_control
+
 camera: Camera = None
 program: Program = None
+ikea: ikea_control.Ikea = None
+
+
+@lru_cache
+def get_settings() -> config.Settings:
+    return config.Settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global camera
+    global ikea
+    settings = get_settings()
+    ikea = ikea_control.Ikea(settings.host, settings.identity, settings.psk, 65565 )
+    await ikea.get_devices()
     yield
     if camera is not None:
         camera.exit()
         camera = None
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -42,11 +56,12 @@ async def get_status():
 async def connect_camera():
     global camera
     global program
+    global ikea
     if camera is None:
         try:
             camera = Camera()
             params = camera.read_params()
-            program = Program(Lights(), camera)
+            program = Program(Lights(), camera, ikea)
             return {"status": "connected", "camera": True, "params": params}
         except Exception as e:
             camera = None
@@ -86,7 +101,7 @@ async def set_param(param_name: str, value: str):
         return {"status": "error", "message": "Camera not connected"}
 
     # ._value2member_map_  required for older python then 3.12
-    if param_name not in Params._value2member_map_ :
+    if param_name not in Params._value2member_map_:
         return {"status": "error", "message": f"Parameter {param_name} not found"}
 
     try:
@@ -94,6 +109,7 @@ async def set_param(param_name: str, value: str):
         return {"status": "success", "param": param}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
 
 @app.post("/run")
 async def run_program():
