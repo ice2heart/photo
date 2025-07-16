@@ -55,7 +55,7 @@ class Program:
         ]
 
     async def reset(self):
-        self.ikea.change_light_state(False)
+        await self.ikea.change_light_state(False)
         self.lights.clear()
         self.stage = None
 
