@@ -119,3 +119,11 @@ async def run_program():
     while (await program.step() != -1):
         pass
     return {"status": "success"}
+
+@app.post("/reset")
+async def reset_program():
+    global program
+    if program is None:
+        return {"status": "error", "message": "Program not initialized"}
+    await program.reset()
+    return {"status": "success"}

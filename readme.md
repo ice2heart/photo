@@ -32,7 +32,6 @@ npm install
 npm run build
 
 sudo apt-get install libgphoto2-dev python3-setuptools python3-pip
-sudo pip3 install "fastapi[standard]" gphoto2 pydantic-settings --only-binary :all: --break-system-packages
-sudo pip3 install rpi_ws281x adafruit-circuitpython-neopixel "pytradfri[async]" --break-system-packages
+sudo pip3 install "fastapi[standard]" gphoto2 pydantic-settings rpi_ws281x adafruit-circuitpython-neopixel "pytradfri[async]" --only-binary :all: --break-system-packages
 
 sudo chmod u+s  /usr/bin/python3
