@@ -98,9 +98,9 @@ class TopLightsProgram(BaseProgram):
             {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_TOP.value, 'action': ACTIONS.USER_INPUT},
             {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
             {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value,  'action': ACTIONS.CAPTURE, 'camera': {
-                'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
+                'shutterspeed': '1.3', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_TOP.value, 'action': ACTIONS.CAPTURE, 'camera': {
-                'shutterspeed': '1/4', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
+                'shutterspeed': '1.3', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.B_TOP.value, 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 3', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.A_TOP.value, 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 4',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.H_TOP.value, 'action': ACTIONS.CAPTURE},
@@ -108,7 +108,8 @@ class TopLightsProgram(BaseProgram):
             {'name': 'Stage 6', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.F_TOP.value, 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 7',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.E_TOP.value, 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 8',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.D_TOP.value, 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 9',  'light': True, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 9',  'light': True, 'action': ACTIONS.CAPTURE, 'camera': {
+                'shutterspeed': '1/60', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Final',  'light': False, 'action': ACTIONS.NO_ACTION},
         ]
 
@@ -120,7 +121,7 @@ class BottomLightsProgram(BaseProgram):
             {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_BOTTOM.value, 'action': ACTIONS.USER_INPUT},
             {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
             {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value,  'action': ACTIONS.CAPTURE, 'camera': {
-                'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
+                'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_BOTTOM.value, 'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '1/4', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.B_BOTTOM.value, 'action': ACTIONS.CAPTURE},
