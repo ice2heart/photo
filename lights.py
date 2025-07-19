@@ -13,6 +13,26 @@ class ACTIONS(enum.Enum):
     CAPTURE = 'capture'
 
 
+class LIGHT_GROUPS(enum.Enum):
+    TOP_RING = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    A_TOP = [16, 17, 18, 19]
+    A_BOTTOM = [20, 21, 22, 23]
+    B_TOP = [31, 30, 29, 28]
+    B_BOTTOM = [24, 25, 26, 27]
+    C_TOP = [32, 33, 34, 35]
+    C_BOTTOM = [36, 37, 38, 39]
+    D_TOP = [47, 46, 45, 44]
+    D_BOTTOM = [40, 41, 42, 43]
+    E_TOP = [48, 49, 50, 51]
+    E_BOTTOM = [52, 53, 54, 55]
+    F_TOP = [63, 62, 61, 60]
+    F_BOTTOM = [56, 57, 58, 59]
+    G_TOP = [64, 65, 66, 67]
+    G_BOTTOM = [68, 69, 70, 71]
+    H_TOP = [79, 78, 77, 76]
+    H_BOTTOM = [72, 73, 74, 75]
+
+
 class Lights:
     def __init__(self):
         self.sides = neopixel.NeoPixel(board.D10, 80, pixel_order=neopixel.RGBW)
@@ -29,30 +49,13 @@ class Lights:
                 raise ValueError(f"Index {i} is out of bounds for sides array.")
 
 
-class Program:
+class BaseProgram:
     def __init__(self, lights: Lights, camera: Camera, ikea: Ikea):
         self.lights = lights
         self.camera = camera
         self.ikea = ikea
         self.stage = None  # Current stage of the program
-        self.program = [
-            {'name': 'Focus', 'color': (0, 0, 0, 200), 'ids': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 'action': ACTIONS.USER_INPUT},
-            {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': [16, 17, 18, 19], 'action': ACTIONS.USER_INPUT},
-            {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
-            {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 200), 'ids': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],  'action': ACTIONS.CAPTURE, 'camera': {
-                'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
-            {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': [16, 17, 18, 19], 'action': ACTIONS.CAPTURE, 'camera': {
-                'shutterspeed': '1/4', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
-            {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': [31, 30, 29, 28], 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 3', 'color': (0, 0, 0, 250), 'ids': [32, 33, 34, 35], 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 4',  'color': (0, 0, 0, 250), 'ids': [47, 46, 45, 44], 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 5', 'color': (0, 0, 0, 250), 'ids': [48, 49, 50, 51], 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 6', 'color': (0, 0, 0, 250), 'ids': [63, 62, 61, 60], 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 7',  'color': (0, 0, 0, 250), 'ids': [64, 65, 66, 67], 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 8',  'color': (0, 0, 0, 250), 'ids': [79, 78, 77, 76], 'action': ACTIONS.CAPTURE},
-            {'name': 'Stage 9',  'light': True, 'action': ACTIONS.CAPTURE},
-            {'name': 'Final',  'light': False, 'action': ACTIONS.NO_ACTION},
-        ]
+        self.program = []
 
     async def reset(self):
         await self.ikea.change_light_state(False)
@@ -62,11 +65,8 @@ class Program:
     async def step(self) -> int:
         stage_index = 0
         if self.stage is not None:
-            # previous_stage = self.stage[self.stage]
             self.lights.clear()
             stage_index = self.stage+1
-            # if 'light' in self.program[self.stage]:
-            #     self.ikea.change_light_state( not self.program[self.stage]['light']);
 
         self.stage = stage_index
         try:
@@ -89,3 +89,47 @@ class Program:
         elif stage['action'] == ACTIONS.CAPTURE:
             self.camera.capture_image()
         return 0
+
+class TopLightsProgram(BaseProgram):
+    def __init__(self, lights, camera, ikea):
+        super().__init__(lights, camera, ikea)
+        self.program =  [
+            {'name': 'Focus', 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value, 'action': ACTIONS.USER_INPUT},
+            {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_TOP.value, 'action': ACTIONS.USER_INPUT},
+            {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
+            {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value,  'action': ACTIONS.CAPTURE, 'camera': {
+                'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
+            {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_TOP.value, 'action': ACTIONS.CAPTURE, 'camera': {
+                'shutterspeed': '1/4', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
+            {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.B_TOP.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 3', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.A_TOP.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 4',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.H_TOP.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 5', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.G_TOP.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 6', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.F_TOP.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 7',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.E_TOP.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 8',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.D_TOP.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 9',  'light': True, 'action': ACTIONS.CAPTURE},
+            {'name': 'Final',  'light': False, 'action': ACTIONS.NO_ACTION},
+        ]
+
+class BottomLightsProgram(BaseProgram):
+    def __init__(self, lights, camera, ikea):
+        super().__init__(lights, camera, ikea)
+        self.program =  [
+            {'name': 'Focus', 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value, 'action': ACTIONS.USER_INPUT},
+            {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_BOTTOM.value, 'action': ACTIONS.USER_INPUT},
+            {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
+            {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value,  'action': ACTIONS.CAPTURE, 'camera': {
+                'shutterspeed': '1/5', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Flash'}},
+            {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_BOTTOM.value, 'action': ACTIONS.CAPTURE, 'camera': {
+                'shutterspeed': '1/4', 'iso': '400', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
+            {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.B_BOTTOM.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 3', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.A_BOTTOM.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 4',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.H_BOTTOM.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 5', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.G_BOTTOM.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 6', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.F_BOTTOM.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 7',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.E_BOTTOM.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 8',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.D_BOTTOM.value, 'action': ACTIONS.CAPTURE},
+            {'name': 'Stage 9',  'light': True, 'action': ACTIONS.CAPTURE},
+            {'name': 'Final',  'light': False, 'action': ACTIONS.NO_ACTION},
+        ]

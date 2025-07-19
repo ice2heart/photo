@@ -4,13 +4,13 @@ from functools import lru_cache
 from contextlib import asynccontextmanager
 
 from camera import Camera, Params
-from lights import Lights, Program
+from lights import Lights, TopLightsProgram, BottomLightsProgram, BaseProgram
 
 from config import Settings
 from ikea_control import Ikea
 
 camera: Camera = None
-program: Program = None
+program: BaseProgram = None
 ikea: Ikea = None
 
 
@@ -61,7 +61,7 @@ async def connect_camera():
         try:
             camera = Camera()
             params = camera.read_params()
-            program = Program(Lights(), camera, ikea)
+            program = TopLightsProgram(Lights(), camera, ikea)
             return {"status": "connected", "camera": True, "params": params}
         except Exception as e:
             camera = None
