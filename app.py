@@ -61,7 +61,7 @@ async def connect_camera():
         try:
             camera = Camera()
             params = camera.read_params()
-            program = TopLightsProgram(Lights(), camera, ikea)
+            program = BottomLightsProgram(Lights(), camera, ikea)
             return {"status": "connected", "camera": True, "params": params}
         except Exception as e:
             camera = None
