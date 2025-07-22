@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
     global camera
     global ikea
     settings = get_settings()
-    ikea = Ikea(settings.host, settings.identity, settings.psk, 65565 )
+    ikea = Ikea(settings.host, settings.identity, settings.psk, 65546 )
     await ikea.get_devices()
     yield
     if camera is not None:

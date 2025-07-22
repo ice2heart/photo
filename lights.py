@@ -1,6 +1,7 @@
 import board
 import neopixel
 
+import asyncio
 import enum
 
 from camera import Camera
@@ -79,6 +80,7 @@ class BaseProgram:
 
         if 'light' in stage:
             await self.ikea.change_light_state(stage['light'])
+            await asyncio.sleep(0.5)
 
         if 'camera' in stage:
             for k in stage['camera']:

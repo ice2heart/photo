@@ -7,11 +7,12 @@ from pytradfri.resource import ApiResource
 
 
 class Ikea:
-    def __init__(self, host: str, identity: str, psk:str, light_id: int):
+    def __init__(self, host: str, identity: str, psk:str, socket_id: int):
         self.host = host
         self.identity = identity
         self.psk = psk
-        self.light_id = light_id
+        self.socket_id = socket_id
+        self.socket = None
 
     async def get_devices(self):
         self.api_factory = await APIFactory.init(host=self.host, psk_id=self.identity, psk=self.psk)
@@ -41,10 +42,10 @@ class Ikea:
             asyncio.create_task(self.api(observe_command))
             await asyncio.sleep(0)
 
-        self.light = [light for light in self.lights if light.id == self.light_id][0]
+        self.socket = [socket for socket in devices if socket.id == self.socket_id][0]
 
     async def change_light_state(self, state):
-        on_command = self.light.light_control.set_state(state)
+        on_command = self.socket.socket_control.set_state(state)
         await self.api(on_command)
 
     async def shutdown(self):
