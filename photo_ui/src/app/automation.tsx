@@ -32,6 +32,12 @@ export default function AutomationPage() {
         })
     }
 
+    const handleTopLight= async () => {
+        await fetch(`/api/light?name=TOP&value=True`, {
+            method: "POST",
+        })
+    }
+
     return (
         <div>
             <Card variant="outlined" sx={{ maxWidth: 600 }}>
@@ -48,6 +54,9 @@ export default function AutomationPage() {
                         <Button onClick={handleReset}>Reset</Button>
                     </ButtonGroup>
                     <Divider />
+                    <ButtonGroup variant="outlined" aria-label="outlined primary button group">
+                        <Button onClick={handleTopLight}>Top Light ON</Button>
+                    </ButtonGroup>
                 </Stack>
 
             </Card>

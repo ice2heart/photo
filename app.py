@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
     global camera
     global ikea
     settings = get_settings()
-    ikea = Ikea(settings.host, settings.identity, settings.psk, 65546 )
+    ikea = Ikea(settings.host, settings.identity, settings.psk, 65546)
     await ikea.get_devices()
     yield
     if camera is not None:
@@ -120,10 +120,23 @@ async def run_program():
         pass
     return {"status": "success"}
 
+
 @app.post("/reset")
 async def reset_program():
     global program
     if program is None:
         return {"status": "error", "message": "Program not initialized"}
     await program.reset()
+    return {"status": "success"}
+
+
+@app.post("/light")
+async def set_light(param_name: str, value: str):
+    global program
+    if param_name == "TOP":
+        await program.top_ring(bool(value))
+    if param_name == "SIDE":
+        await program.side_light(bool(value))
+    if param_name == "BOTTOM":
+        await program.bottom_light(bool(value))
     return {"status": "success"}

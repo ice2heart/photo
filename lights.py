@@ -92,10 +92,26 @@ class BaseProgram:
             self.camera.capture_image()
         return 0
 
+    async def top_ring(self, state: bool):
+        if state:
+            self.lights.set_sides((0, 0, 0, 250), LIGHT_GROUPS.TOP_RING.value)
+        else:
+            self.lights.set_sides((0, 0, 0, 0), LIGHT_GROUPS.TOP_RING.value)
+
+    async def side_light(self, state: bool):
+        if state:
+            self.lights.set_sides((0, 0, 0, 250), LIGHT_GROUPS.C_BOTTOM.value)
+        else:
+            self.lights.set_sides((0, 0, 0, 0), LIGHT_GROUPS.C_BOTTOM.value)
+
+    async def bottom_light(self, state: bool):
+        await self.ikea.change_light_state(state)
+
+
 class TopLightsProgram(BaseProgram):
     def __init__(self, lights, camera, ikea):
         super().__init__(lights, camera, ikea)
-        self.program =  [
+        self.program = [
             {'name': 'Focus', 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value, 'action': ACTIONS.USER_INPUT},
             {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_TOP.value, 'action': ACTIONS.USER_INPUT},
             {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
@@ -115,13 +131,11 @@ class TopLightsProgram(BaseProgram):
             {'name': 'Final',  'light': False, 'action': ACTIONS.NO_ACTION},
         ]
 
+
 class BottomLightsProgram(BaseProgram):
     def __init__(self, lights, camera, ikea):
         super().__init__(lights, camera, ikea)
-        self.program =  [
-            {'name': 'Focus', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.TOP_RING.value, 'action': ACTIONS.USER_INPUT},
-            {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_BOTTOM.value, 'action': ACTIONS.USER_INPUT},
-            {'name': 'Side', 'light': True, 'action': ACTIONS.USER_INPUT},
+        self.program = [
             {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.TOP_RING.value,  'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '2', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_BOTTOM.value, 'action': ACTIONS.CAPTURE, 'camera': {
@@ -135,5 +149,5 @@ class BottomLightsProgram(BaseProgram):
             {'name': 'Stage 8',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.D_BOTTOM.value, 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 9',  'light': True, 'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '1/60', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
-            {'name': 'Final',  'light': False, 'action': ACTIONS.NO_ACTION},
+            {'name': 'Final',  'light': False,  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.TOP_RING.value, 'action': ACTIONS.NO_ACTION},
         ]
