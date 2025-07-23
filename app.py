@@ -131,12 +131,12 @@ async def reset_program():
 
 
 @app.post("/light")
-async def set_light(param_name: str, value: str):
+async def set_light(name: str, value: str):
     global program
-    if param_name == "TOP":
+    if name == "TOP":
         await program.top_ring(bool(value))
-    if param_name == "SIDE":
+    if name == "SIDE":
         await program.side_light(bool(value))
-    if param_name == "BOTTOM":
+    if name == "BOTTOM":
         await program.bottom_light(bool(value))
     return {"status": "success"}
