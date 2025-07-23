@@ -3,6 +3,7 @@ import neopixel
 
 import asyncio
 import enum
+import logging
 
 from camera import Camera
 from ikea_control import Ikea
@@ -74,6 +75,7 @@ class BaseProgram:
             stage = self.program[stage_index]
         except IndexError:
             self.stage = None
+            self.lights.set_sides((0, 0, 0, 250), LIGHT_GROUPS.TOP_RING.value)
             return -1
         if 'color' in stage:
             self.lights.set_sides(stage['color'], stage.get('ids', []))
@@ -149,5 +151,5 @@ class BottomLightsProgram(BaseProgram):
             {'name': 'Stage 8',  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.D_BOTTOM.value, 'action': ACTIONS.CAPTURE},
             {'name': 'Stage 9',  'light': True, 'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '1/60', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
-            {'name': 'Final',  'light': False,  'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.TOP_RING.value, 'action': ACTIONS.NO_ACTION},
+            {'name': 'Final',  'light': False, 'action': ACTIONS.NO_ACTION},
         ]
