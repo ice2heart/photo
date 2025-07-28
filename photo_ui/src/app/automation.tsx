@@ -24,6 +24,11 @@ export default function AutomationPage() {
         }
         
     }
+    const handleContinue = async () => {
+        await fetch(`/api/continue`, {
+            method: "POST",
+        })
+    }
     const handleReset = async () => {
         await fetch(`/api/reset`, {
             method: "POST",
@@ -53,6 +58,7 @@ export default function AutomationPage() {
                     <Divider />
                     <ButtonGroup variant="outlined" aria-label="outlined primary button group">
                         <Button onClick={handleRun} disabled={runStatus !== RunState.Ready}>Run</Button>
+                        <Button onClick={handleContinue} >Continue</Button>
                         <Divider />
                         <Button onClick={handleReset}>Reset</Button>
                     </ButtonGroup>
