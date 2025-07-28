@@ -14,15 +14,13 @@ enum RunState {
 export default function AutomationPage() {
     const [runStatus, setRunStatus] = useState(RunState.Ready)
     const handleRun = async () => {
-        setRunStatus(RunState.Run)
-        const response = await fetch(`/api/run`, {
-            method: "POST",
-        })
-        
         setRunStatus(RunState.Ready)
-        const newData = await response.json()
-        if (newData.status === 'error') {
-            return;
+        const evtSource = new EventSource("/api/run");
+        evtSource.onmessage = (event: MessageEvent) => {
+            console.log(event);
+        }
+        evtSource.onerror = (ev: Event) => {
+            console.log(ev);
         }
         
     }
@@ -32,8 +30,13 @@ export default function AutomationPage() {
         })
     }
 
-    const handleTopLight= async () => {
+    const handleTopLightOn= async () => {
         await fetch(`/api/light?name=TOP&value=True`, {
+            method: "POST",
+        })
+    }
+    const handleTopLightOff= async () => {
+        await fetch(`/api/light?name=TOP&value=False`, {
             method: "POST",
         })
     }
@@ -55,7 +58,8 @@ export default function AutomationPage() {
                     </ButtonGroup>
                     <Divider />
                     <ButtonGroup variant="outlined" aria-label="outlined primary button group">
-                        <Button onClick={handleTopLight}>Top Light ON</Button>
+                        <Button onClick={handleTopLightOn}>Top Light ON</Button>
+                        <Button onClick={handleTopLightOff}>Top Light OFF</Button>
                     </ButtonGroup>
                 </Stack>
 

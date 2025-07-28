@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 
+import asyncio
 from functools import lru_cache
 from contextlib import asynccontextmanager
 
@@ -12,6 +14,9 @@ from ikea_control import Ikea
 camera: Camera = None
 program: BaseProgram = None
 ikea: Ikea = None
+
+step_lock: asyncio.Event = asyncio.Event()
+program_lock: bool = True
 
 
 @lru_cache
@@ -111,21 +116,47 @@ async def set_param(param_name: str, value: str):
         return {"status": "error", "message": str(e)}
 
 
+async def program_exec(program: BaseProgram):
+    global step_lock
+    global program_lock
+    while (program_lock):
+        result = await program.step()
+        yield f'event: StepUpdate\ndata: {result}\n\n'
+        if result == -1:
+            step_lock.clear()
+            await step_lock.wait()
+        if result == -2:
+            return
+
+
 @app.post("/run")
 async def run_program():
     global program
+    global program_lock
+    global step_lock
     if program is None:
-        return {"status": "error", "message": "Program not initialized"}
-    while (await program.step() != -1):
-        pass
+        raise HTTPException(status_code=500, detail="Program not initialized")
+    program_lock = True
+    step_lock.clear()
+    return StreamingResponse(program_exec(program), media_type="text/event-stream")
+
+
+@app.post("/continue")
+async def continue_exec():
+    global step_lock
+    step_lock.clear()
     return {"status": "success"}
 
 
 @app.post("/reset")
 async def reset_program():
     global program
+    global program_lock
+    global step_lock
     if program is None:
         return {"status": "error", "message": "Program not initialized"}
+    program_lock = False
+    step_lock.set()
     await program.reset()
     return {"status": "success"}
 

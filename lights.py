@@ -76,7 +76,7 @@ class BaseProgram:
         except IndexError:
             self.stage = None
             self.lights.set_sides((0, 0, 0, 250), LIGHT_GROUPS.TOP_RING.value)
-            return -1
+            return -2
         if 'color' in stage:
             self.lights.set_sides(stage['color'], stage.get('ids', []))
 
