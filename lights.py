@@ -16,28 +16,28 @@ class ACTIONS(enum.Enum):
 
 
 class LIGHT_GROUPS(enum.Enum):
-    TOP_RING = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    A_TOP = [16, 17, 18, 19]
-    A_BOTTOM = [20, 21, 22, 23]
-    B_TOP = [31, 30, 29, 28]
-    B_BOTTOM = [24, 25, 26, 27]
-    C_TOP = [32, 33, 34, 35]
-    C_BOTTOM = [36, 37, 38, 39]
-    D_TOP = [47, 46, 45, 44]
-    D_BOTTOM = [40, 41, 42, 43]
-    E_TOP = [48, 49, 50, 51]
-    E_BOTTOM = [52, 53, 54, 55]
-    F_TOP = [63, 62, 61, 60]
-    F_BOTTOM = [56, 57, 58, 59]
-    G_TOP = [64, 65, 66, 67]
-    G_BOTTOM = [68, 69, 70, 71]
-    H_TOP = [79, 78, 77, 76]
-    H_BOTTOM = [72, 73, 74, 75]
+    TOP_RING = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    A_TOP = [24, 25, 26, 27]
+    A_BOTTOM = [31, 30, 29, 28]
+    B_TOP = [36, 37, 38, 39]
+    B_BOTTOM = [32, 33, 34, 35]
+    C_TOP = [40, 41, 42, 43]
+    C_BOTTOM = [47, 46, 45, 44]
+    D_TOP = [52, 53, 54, 55]
+    D_BOTTOM = [48, 49, 50, 51]
+    E_TOP = [56, 57, 58, 59]
+    E_BOTTOM = [63, 62, 61, 60]
+    F_TOP = [68, 69, 70, 71]
+    F_BOTTOM = [64, 65, 66, 67]
+    G_TOP = [72, 73, 74, 75]
+    G_BOTTOM = [79, 78, 77, 76]
+    H_TOP = [84,85,86,87]
+    H_BOTTOM = [80,81,82,83]
 
 
 class Lights:
     def __init__(self):
-        self.sides = neopixel.NeoPixel(board.D10, 80, pixel_order=neopixel.RGBW)
+        self.sides = neopixel.NeoPixel(board.D10, 88, pixel_order=neopixel.RGBW)
         self.sides.fill((0, 0, 0, 0))  # Initialize all pixels
 
     def clear(self):
