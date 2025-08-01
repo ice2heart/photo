@@ -129,7 +129,7 @@ async def program_exec(program: BaseProgram):
             return
 
 
-@app.post("/run")
+@app.get("/run")
 async def run_program():
     global program
     global program_lock
@@ -165,9 +165,9 @@ async def reset_program():
 async def set_light(name: str, value: str):
     global program
     if name == "TOP":
-        await program.top_ring(bool(value))
+        await program.top_ring(value in ('True', 'true'))
     if name == "SIDE":
-        await program.side_light(bool(value))
+        await program.side_light(value in ('True', 'true'))
     if name == "BOTTOM":
-        await program.bottom_light(bool(value))
+        await program.bottom_light(value in ('True', 'true'))
     return {"status": "success"}
