@@ -139,7 +139,7 @@ class BottomLightsProgram(BaseProgram):
         super().__init__(lights, camera, ikea)
         self.program = [
             {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.TOP_RING.value,  'action': ACTIONS.CAPTURE, 'camera': {
-                'shutterspeed': '2', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
+                'shutterspeed': '1', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 1', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_BOTTOM.value, 'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '1.3', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},
             {'name': 'Stage 2', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.B_BOTTOM.value, 'action': ACTIONS.CAPTURE},
