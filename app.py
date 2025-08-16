@@ -5,8 +5,8 @@ import asyncio
 from functools import lru_cache
 from contextlib import asynccontextmanager
 
-from camera import Camera, Params
-from lights import Lights, TopLightsProgram, BottomLightsProgram, BaseProgram
+from camera import BaseCamera, Camera, Params
+from lights import TopLightsProgram, BottomLightsProgram, BaseProgram
 
 from config import Settings
 from ikea_control import Ikea
@@ -66,10 +66,11 @@ async def connect_camera():
         try:
             camera = Camera()
             params = camera.read_params()
-            program = BottomLightsProgram(Lights(), camera, ikea)
+            program = BottomLightsProgram(camera, ikea)
             return {"status": "connected", "camera": True, "params": params}
         except Exception as e:
             camera = None
+            program = BottomLightsProgram(BaseCamera(), ikea)
             return {"status": "error", "camera": False, "message": str(e)}
 
 
@@ -121,7 +122,9 @@ async def program_exec(program: BaseProgram):
     global program_lock
     while (program_lock):
         result = await program.step()
+        print(f'run {result}')
         yield f'event: StepUpdate\ndata: {result}\n\n'
+        await asyncio.sleep(0.01)
         if result == -1:
             step_lock.clear()
             await step_lock.wait()

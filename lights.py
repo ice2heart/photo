@@ -1,11 +1,19 @@
-import board
-import neopixel
+
 
 import asyncio
 import enum
 import logging
+import sys
 
-from camera import Camera
+
+try:
+    import board
+    import neopixel
+except ModuleNotFoundError:
+    pass
+
+
+from camera import BaseCamera
 from ikea_control import Ikea
 
 
@@ -34,8 +42,13 @@ class LIGHT_GROUPS(enum.Enum):
     H_TOP = [84,85,86,87]
     H_BOTTOM = [80,81,82,83]
 
+class BaseLights:
+    def clear(self):
+        logging.info("Clear lights")
+    def set_sides(self, color, ids):
+        logging.info(f'Set sides {color} {ids}')
 
-class Lights:
+class Lights(BaseLights):
     def __init__(self):
         self.sides = neopixel.NeoPixel(board.D10, 88, pixel_order=neopixel.RGBW)
         self.sides.fill((0, 0, 0, 0))  # Initialize all pixels
@@ -50,10 +63,13 @@ class Lights:
             else:
                 raise ValueError(f"Index {i} is out of bounds for sides array.")
 
-
 class BaseProgram:
-    def __init__(self, lights: Lights, camera: Camera, ikea: Ikea):
-        self.lights = lights
+    def __init__(self, camera: BaseCamera, ikea: Ikea):
+        if "board" in sys.modules:
+            self.lights = Lights()
+        else:
+            self.lights = BaseLights()
+
         self.camera = camera
         self.ikea = ikea
         self.stage = None  # Current stage of the program
@@ -111,8 +127,8 @@ class BaseProgram:
 
 
 class TopLightsProgram(BaseProgram):
-    def __init__(self, lights, camera, ikea):
-        super().__init__(lights, camera, ikea)
+    def __init__(self, camera, ikea):
+        super().__init__(camera, ikea)
         self.program = [
             {'name': 'Focus', 'color': (0, 0, 0, 200), 'ids': LIGHT_GROUPS.TOP_RING.value, 'action': ACTIONS.USER_INPUT},
             {'name': 'Side', 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.C_TOP.value, 'action': ACTIONS.USER_INPUT},
@@ -135,8 +151,8 @@ class TopLightsProgram(BaseProgram):
 
 
 class BottomLightsProgram(BaseProgram):
-    def __init__(self, lights, camera, ikea):
-        super().__init__(lights, camera, ikea)
+    def __init__(self, camera, ikea):
+        super().__init__(camera, ikea)
         self.program = [
             {'name': 'Stage 0', 'light': False, 'color': (0, 0, 0, 250), 'ids': LIGHT_GROUPS.TOP_RING.value,  'action': ACTIONS.CAPTURE, 'camera': {
                 'shutterspeed': '1', 'iso': '200', 'aperture': '7.1', 'whitebalance': 'Tungsten'}},

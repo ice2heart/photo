@@ -14,15 +14,16 @@ enum RunState {
 export default function AutomationPage() {
     const [runStatus, setRunStatus] = useState(RunState.Ready)
     const handleRun = async () => {
-        setRunStatus(RunState.Ready)
+        setRunStatus(RunState.Run);
         const evtSource = new EventSource("/api/run");
-        evtSource.onmessage = (event: MessageEvent) => {
+        evtSource.onmessage = (event) => {
             console.log(event);
         }
-        evtSource.onerror = (ev: Event) => {
+        evtSource.onerror = (ev) => {
             console.log(ev);
+            setRunStatus(RunState.Ready);
+            evtSource.close();
         }
-        
     }
     const handleContinue = async () => {
         await fetch(`/api/continue`, {
@@ -35,12 +36,12 @@ export default function AutomationPage() {
         })
     }
 
-    const handleTopLightOn= async () => {
+    const handleTopLightOn = async () => {
         await fetch(`/api/light?name=TOP&value=True`, {
             method: "POST",
         })
     }
-    const handleTopLightOff= async () => {
+    const handleTopLightOff = async () => {
         await fetch(`/api/light?name=TOP&value=False`, {
             method: "POST",
         })
