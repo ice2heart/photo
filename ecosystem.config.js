@@ -11,6 +11,7 @@ module.exports = {
     watch: false,
     exec_mode: 'fork',
     instances: '1', // Or a number of instances
-    script: 'caddy'
+    script: './caddy',
+    args: 'run'
   }]
 };
