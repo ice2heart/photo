@@ -173,4 +173,6 @@ async def set_light(name: str, value: str):
         await program.side_light(value in ('True', 'true'))
     if name == "BOTTOM":
         await program.bottom_light(value in ('True', 'true'))
+    if name == "NEXT":
+        await program.next()
     return {"status": "success"}

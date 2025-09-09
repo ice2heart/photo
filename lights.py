@@ -50,11 +50,13 @@ class BaseLights:
 
 class Lights(BaseLights):
     def __init__(self):
-        self.sides = neopixel.NeoPixel(board.D10, 88, pixel_order=neopixel.RGBW)
+        self.sides = neopixel.NeoPixel(board.D10, 88, pixel_order=neopixel.RGBW, auto_write=False)
         self.sides.fill((0, 0, 0, 0))  # Initialize all pixels
+        self.sides.write()
 
     def clear(self):
         self.sides.fill((0, 0, 0, 0))
+        self.sides.write()
 
     def set_sides(self, color, ids):
         for i in ids:
@@ -62,6 +64,7 @@ class Lights(BaseLights):
                 self.sides[i] = color
             else:
                 raise ValueError(f"Index {i} is out of bounds for sides array.")
+        self.sides.write()
 
 class BaseProgram:
     def __init__(self, camera: BaseCamera, ikea: Ikea):
@@ -124,6 +127,11 @@ class BaseProgram:
 
     async def bottom_light(self, state: bool):
         await self.ikea.change_light_state(state)
+
+    async def next(self):
+        async for x in LIGHT_GROUPS:
+            self.lights.set_sides((0, 0, 0, 250), x.value)
+            yield
 
 
 class TopLightsProgram(BaseProgram):
