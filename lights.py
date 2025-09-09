@@ -128,10 +128,9 @@ class BaseProgram:
     async def bottom_light(self, state: bool):
         await self.ikea.change_light_state(state)
 
-    async def next(self):
-        async for x in LIGHT_GROUPS:
-            self.lights.set_sides((0, 0, 0, 250), x.value)
-            yield
+    async def next(self, name):
+        self.lights.clear()
+        self.lights.set_sides((0, 0, 0, 250), LIGHT_GROUPS[name].value)
 
 
 class TopLightsProgram(BaseProgram):
